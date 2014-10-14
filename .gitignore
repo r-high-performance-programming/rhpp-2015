@@ -9,3 +9,7 @@
 
 # RStudio files
 .Rproj.user/
+
+# Output and data files (e.g. Rprof.out)
+*.out
+*.rds
