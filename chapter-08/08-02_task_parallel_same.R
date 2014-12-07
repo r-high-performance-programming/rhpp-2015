@@ -6,26 +6,22 @@ system.time(random1 <- rpois(nsamples, lambda))
 
 # Split job evenly to workers
 library(parallel)
-cores <- detectCores()
-cl <- makeCluster(cores)
-samples.per.process <- rep.int(nsamples %/% cores, cores)
-for (i in seq_len(nsamples %% cores)) {
-    samples.per.process[i] <- samples.per.process[i] + 1L
-}
+ncores <- detectCores()
+cl <- makeCluster(ncores)
+samples.per.process <-
+    diff(round(seq(0, nsamples, length.out = ncores+1)))
 
 # Socket cluster
 clusterSetRNGStream(cl)
 system.time(random2 <- unlist(
-    parLapply(cl, samples.per.process,
-              function(n, lambda) rpois(n, lambda),
-              lambda)
+    parLapply(cl, samples.per.process, rpois,
+              lambda = lambda)
 ))
 stopCluster(cl)
 
 # Forked cluster (non-Windows only)
 system.time(random3 <- unlist(
-    mclapply(samples.per.process,
-             function(n, lambda) rpois(n, lambda),
-             lambda,
-             mc.set.seed = TRUE, mc.cores = cores)
+    mclapply(samples.per.process, rpois,
+             lambda = lambda,
+             mc.set.seed = TRUE, mc.cores = ncores)
 ))

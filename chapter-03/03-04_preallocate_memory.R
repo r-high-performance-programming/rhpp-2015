@@ -25,21 +25,17 @@ data <- sample(1:30, size=N, replace=T)
 
 # For loop without preallocating memory
 data_rand1 <- list()
-system.time({
-    for(i in 1:N) {
-        data_rand1[[i]] <- rnorm(data[i])
-    }
-})
+system.time(
+    for(i in 1:N) data_rand1[[i]] <- rnorm(data[i])
+)
 
 # lapply
-system.time(data_rand2 <- lapply(data, FUN=function(x){
-    rnorm(x)
-}))
+system.time(data_rand2 <- lapply(data, rnorm))
 
 # For loop with preallocating memory
 data_rand3 <- vector("list", N)
-system.time({
-    for(i in 1:N) {
-        data_rand3[[i]] <- rnorm(data[i])
-    }
-})
+system.time(for(i in 1:N) data_rand3[[i]] <- rnorm(data[i]))
+
+# Compare with microbenchmark
+microbenchmark(data_rand2 <- lapply(data, rnorm),
+               for(i in 1:N) data_rand3[[i]] <- rnorm(data[i]))

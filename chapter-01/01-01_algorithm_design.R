@@ -1,41 +1,60 @@
-# Number of different sized data sets to generate
-dataSets <- 10
-
-# Generate data sets with linearly increasing size
-# Each data set has 3 clusters
-x <- lapply(1:dataSets, function(i) {
-    m <- rbind(matrix(rnorm(i * 1000, sd=0.2, mean=0), ncol = 2),
-               matrix(rnorm(i * 1000, sd=0.2, mean=1), ncol = 2),
-               matrix(rnorm(i * 1000, sd=0.2, mean=2), ncol = 2))
-    colnames(m) <- c("x", "y")
-    return(m)
-})
-
-# Run a function a given number of times, and return the mean
-# running times
-timer <- function(.fun, .repeats=20, ...) {
-    run.times <- sapply(1:.repeats, function(i, .fun, ...) {
-        system.time(.fun(...))
-    }, .fun, ...)
-    rowMeans(run.times)
+# Compute nth Fibonacci number (recursive)
+fibonacci_rec <- function(n) {
+    if (n <= 1) {
+        return(n)
+    }
+    return(fibonacci_rec(n - 1) + fibonacci_rec(n - 2))
 }
 
-# Time the k-means algorithm on different sized data sets
-kmeans.time <- sapply(x, function(m) {
-    timer(kmeans, x=m, centers=3, nstart=5)
-})
-plot(1:dataSets, kmeans.time["elapsed", ],
-     main="kmeans()", xlab="Data Size", ylab="Run Time", pch=4)
+# Benchmark recursive version
+library(microbenchmark)
+microbenchmark(fibonacci_rec(25), unit = "ms")
 
-# Time the hierarchical clustering algorithm on different sized
-# data sets
-hclust.time <- sapply(x, function(m) {
-    d <- dist(m)
-    timer(hclust, d=d)
-})
+# Compute nth Fibonacci number (sequential)
+fibonacci_seq <- function(n) {
+    if (n <= 1) {
+        return(n)
+    }
+    # (n+1)th element of this vector is the nth Fibonacci number
+    fib <- rep.int(NA_real_, n + 1)
+    fib[1] <- 0
+    fib[2] <- 1
+    for (i in 2:n) {
+        fib[i + 1] <- fib[i] + fib[i - 1]
+    }
+    return(fib[n + 1])
+}
 
-# Plot to compare kmeans vs hclust
-plot(1:dataSets, hclust.time["elapsed", ],
-     main="kmeans() vs hclust()",
-     xlab="Data Size", ylab="Run Time", pch=1)
-points(1:dataSets, kmeans.time["elapsed", ], pch=4)
+# Benchmark sequential version
+microbenchmark(fibonacci_seq(25), unit = "ms")
+
+# Benchmark using different values of n
+ns <- round(seq(0L, 50L, 2L))
+timings <-
+    matrix(nrow = length(ns), ncol = 2L,
+           dimnames = list(ns, c("Recursive", "Sequential")))
+# Sequential
+# Take median of 20 runs
+for (n in ns) {
+    print(n)
+    res <- print(microbenchmark(fibonacci_seq(n),
+                                unit = "s", times = 20L))
+    timings[as.character(n), "Sequential"] <- res$median
+}
+# Recursive
+for (n in ns) {
+    print(n)
+    # Run only once for n > 30, since it will take a long time
+    times <- if (n > 30L) 1L else 10L
+    res <- print(microbenchmark(fibonacci_rec(n),
+                                unit = "s", times = times))
+    timings[as.character(n), "Recursive"] <- res$median
+}
+
+# Plot results
+plot(ns, timings[, "Recursive"], pch = 1,
+     main = "Computational Complexity for Computing Fibonacci Numbers",
+     xlab = "n", ylab = "Execution Time (seconds)")
+points(ns, timings[, "Sequential"], pch = 4)
+legend("top", legend = c("Recursive", "Sequential"),
+       pch = c(1, 4), bty = "o", cex = 0.75, horiz = TRUE)

@@ -21,3 +21,16 @@ rm(sales.data)
 trans.arules <- as(trans.list, "transactions")
 rm(trans.list)
 freq.itemsets <- apriori(trans.arules, list(support = 0.3))
+
+# Automatically remove temporary variables by encapsulating code
+# in a function
+prepare_data <- function(sales.data) {
+    trans.list <- split(sales.data$item, sales.data$trans)
+    trans.arules <- as(trans.list, "transactions")
+    return(trans.arules)
+}
+trans.arules <- prepare_data(sales.data)
+# Any temporary variables created in the function are deleted,
+# freeing up memory
+freq.itemsets <- apriori(trans.arules, list(support = 0.3))
+

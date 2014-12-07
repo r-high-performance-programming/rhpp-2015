@@ -31,13 +31,13 @@ object_size(y)
 object_size(x, y)
 
 tracemem(x)
-x[0]<- 1
-x[0]<- 1
-x[0]<- 0.5
-x[1] <- 0.3
+x[1]<- 1
+x[1]<- 1
+x[1]<- 0.5
+x[2] <- 0.3
 untracemem(x)
 
-customer.age <- as.integer(runif(1e6) * 100)
+customer.age <- sample(18:100, 1e6, replace=TRUE)
 customer.gender <- sample(c("Male", "Female"), 1e6, TRUE)
 
 names(customer.age) <- paste("cust", 1:1e6)

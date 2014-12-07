@@ -21,11 +21,8 @@ bm[1:5, ]
 chunksize <- 1e7
 start <- 1
 while (start <= nrow(bm)) {
-    end <- start + chunksize - 1
-    if (end > nrow(bm)) {
-        end <- nrow(bm)
-        chunksize <- nrow(bm) - start + 1
-    }
+    end <- min(start + chunksize - 1, nrow(bm))
+    chunksize <- end - start + 1
     bm[start:end, 1] <- rpois(chunksize, 1e3)
     bm[start:end, 2] <- sample(0:1, chunksize, TRUE,
                                c(0.7, 0.3))
@@ -39,10 +36,7 @@ col.sums <- numeric(3)
 chunksize <- 1e7
 start <- 1
 while (start <= nrow(bm)) {
-    end <- start + chunksize - 1
-    if (end > nrow(bm)) {
-        end <- nrow(bm)
-    }
+    end <- min(start + chunksize - 1, nrow(bm))
     col.sums <- col.sums + colSums(bm[start:end, ])
     start <- start + chunksize
 }
@@ -52,10 +46,7 @@ col.means <- col.sums / nrow(bm)
 col.sq.dev <- numeric(3)
 start <- 1
 while (start <= nrow(bm)) {
-    end <- start + chunksize - 1
-    if (end > nrow(bm)) {
-        end <- nrow(bm)
-    }
+    end <- min(start + chunksize - 1, nrow(bm))
     col.sq.dev <- col.sq.dev +
         rowSums((t(bm[start:end, ]) - col.means) ^ 2)
     start <- start + chunksize

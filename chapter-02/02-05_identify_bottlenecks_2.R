@@ -10,7 +10,7 @@ x <- runif(1e7)
 Rprof("Rprof-mem.out", memory.profiling=TRUE)
 y <- sampvar(x)
 Rprof(NULL)
-summaryRprof("Rprof-mem.out", memory="both", diff=TRUE)
+summaryRprof("Rprof-mem.out", memory="both")
 
 # Benchmark against var() using 100 repetitions
 library(microbenchmark)

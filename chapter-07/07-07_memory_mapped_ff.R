@@ -21,14 +21,14 @@ vmode(d)
 
 # Split data into chunks
 chunk(d)
-c <- chunk(d, BATCHBYTES = 2e6)
-c
+ch <- chunk(d, BATCHBYTES = 2e6)
+ch
 
 # Chunked computation
 total <- numeric(2)
 quad.table <- integer(4)
 names(quad.table) <- 0:3
-for (idx in c) {
+for (idx in ch) {
     total <- total + colSums(d[idx, ])
     quad.table <- quad.table + table(q[idx])
 }

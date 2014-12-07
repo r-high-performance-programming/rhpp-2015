@@ -9,19 +9,17 @@ library(microbenchmark)
 # Linear models
 A <- matrix(rnorm(1e7), 1e4, 1e3)
 A_df <- data.frame(A)
-indep_var <- paste(names(A_df), collapse="+")
 A_df$label <- rnorm(1e4)
-formu <- paste("label", indep_var, sep="~")
-microbenchmark(lm(formu, data=A_df),
-               gpuLm(formu, data=A_df), 
+microbenchmark(lm(label~., data=A_df),
+               gpuLm(label~., data=A_df), 
                times=30L)
 
 # Generalized linear models (GLMs)
 A <- matrix(rnorm(1e6), 1e3, 1e3)
 A_df <- data.frame(A)
 A_df$label <- rbinom(1e3, size=1, prob=0.5)
-microbenchmark(glm(formu, data=A_df, family=binomial), 
-               gpuGlm(formu, data=A_df, family=binomial),
+microbenchmark(glm(label~., data=A_df, family=binomial), 
+               gpuGlm(label~., data=A_df, family=binomial),
                times=30L)
 
 # Euclidean distance

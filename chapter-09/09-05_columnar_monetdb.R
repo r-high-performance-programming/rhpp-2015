@@ -7,8 +7,8 @@ library(MonetDB.R)
 db.drv <- MonetDB.R()
 db.conn <- dbConnect(db.drv, host = "hostname",
                      port = 50000, dbname = "rdb",
-                     user = "ruser",
-                     password = "rpassword")
+                     user = "monetdb",
+                     password = "monetdb")
 dbWriteTable(db.conn, "sales", sales)
 dbWriteTable(db.conn, "trans_items", trans.items)
 
