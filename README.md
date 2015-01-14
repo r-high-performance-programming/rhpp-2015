@@ -1,6 +1,6 @@
-# rhpc
+# R High Performance Programming
 
-Code examples from the book *R High Performance Computing* by Aloysius Lim and William Tjhi (Packt Publishing)
+Code examples from the book *R High Performance Programming* by Aloysius Lim and William Tjhi (January 2015, Packt Publishing).
 
 The codes are organised by chapter, and files are named in the sequence that they appear in the book. They have been tested on R 3.1.1, which was current at the time of writing.
 
