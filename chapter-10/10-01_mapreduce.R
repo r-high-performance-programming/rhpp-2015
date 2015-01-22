@@ -5,6 +5,7 @@
 # - R 3.0.2
 
 library(rhdfs)
+library(rmr2)
 library(R.utils)
 
 # Download Google Books Ngrams data and upload it to HDFS
@@ -23,7 +24,7 @@ for (f in files) {
 }
 
 # Check that files have been uploaded
-hdfs.ls(“/ngrams/data”)
+hdfs.ls("/ngrams/data")
 
 # Batman vs Superman
 input.format <- make.input.format(
